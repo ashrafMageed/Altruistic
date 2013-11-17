@@ -1,3 +1,5 @@
+::from: http://patrick.lioi.net/2013/03/19/socks-then-shoes/
+
 @echo off
 
 .\src\.nuget\nuget.exe install src\.nuget\packages.config -source "https://nuget.org/api/v2/" -RequireConsent -o "src\packages"

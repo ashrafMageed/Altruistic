@@ -1,3 +1,5 @@
+#http://patrick.lioi.net/2013/03/19/socks-then-shoes/
+
 Framework '4.0'
 
 properties {
