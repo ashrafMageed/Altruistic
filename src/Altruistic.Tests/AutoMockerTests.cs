@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using Moq;
 
 namespace Altruistic.Tests
 {
@@ -70,6 +71,31 @@ namespace Altruistic.Tests
             sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
         }
 
+        public void GetMock_WhenAMockIsRequested_ShouldReturnMockOfType()
+        {
+            // Arrange
+            var sutCreator = new SUTCreator();
+
+            // Act
+            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+
+            // Assert
+            testDependency.Should().BeOfType<Mock<ITestInterfaceDependency>>();
+        }
+
+        public void GetMock_WhenAMockIsRequested_ShouldReturnTheSameMockInstanceUsedInSUT()
+        {
+            // Arrange
+            var sutCreator = new SUTCreator();
+
+            // Act
+            var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+
+            // Assert
+            sut.TestInterfaceDependency.Should().Be(testDependency.Object);
+        }
+
         #region Sample Test Classes
 
         public class SUTWithMultipleConstructors
@@ -99,8 +125,7 @@ namespace Altruistic.Tests
             public ITestInterfaceDependency TestInterfaceDependency { get; set; }
             public AbstractClassDependency AbstractClassDependency { get; set; }
 
-            public SUTWithReferenceDependencies(ITestInterfaceDependency testInterfaceDependency,
-                                                AbstractClassDependency abstractClassDependency)
+            public SUTWithReferenceDependencies(ITestInterfaceDependency testInterfaceDependency, AbstractClassDependency abstractClassDependency)
             {
                 TestInterfaceDependency = testInterfaceDependency;
                 AbstractClassDependency = abstractClassDependency;

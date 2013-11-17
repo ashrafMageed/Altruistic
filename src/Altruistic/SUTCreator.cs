@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Moq;
 
@@ -7,6 +6,18 @@ namespace Altruistic
 {
     public class SUTCreator
     {
+        private readonly ICreateMock _mockCreator;
+
+        public SUTCreator() : this(new MockCreatorDecorator(new MoqMockCreator())){}
+
+        public SUTCreator(ICreateMock mockCreator)
+        {
+            if(mockCreator == null)
+                throw new ArgumentNullException("injected ICreateMock is null");
+
+            _mockCreator = mockCreator;
+        }
+
         /// <summary>
         /// Create the System Under Test (SUT) and all it's constructor dependencies
         /// </summary>
@@ -22,20 +33,19 @@ namespace Altruistic
 ;
             var parameterizedConstructor = constructors.OrderByDescending(x => x.GetParameters().Count()).First();
             var parameters = parameterizedConstructor.GetParameters().ToList();
-            var constructorParameters = parameters.Select(parameter => GetDefault(parameter.ParameterType, CreateMock));
+            var constructorParameters = parameters.Select(parameter => GetDefault(parameter.ParameterType, _mockCreator.CreateFromType));
 
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
 
-        private object CreateMock(Type type)
+        public Mock<T> GetMock<T>() where T : class
         {
-            var genericConstructor = typeof(Mock<>).MakeGenericType(type).GetConstructor(Type.EmptyTypes);
-            return ((Mock)genericConstructor.Invoke(new object[0])).Object;
+            return (Mock<T>)_mockCreator.CreateFromType(typeof (T));
         }
 
-        public static object GetDefault(Type type, Func<Type, object> getReferenceTypeDefault)
+        private static object GetDefault(Type type, Func<Type, Mock> getReferenceTypeDefault)
         {
-            return type.IsValueType ? Activator.CreateInstance(type) : getReferenceTypeDefault(type);
+            return type.IsValueType ? Activator.CreateInstance(type) : getReferenceTypeDefault(type).Object;
         }
     }
 }
