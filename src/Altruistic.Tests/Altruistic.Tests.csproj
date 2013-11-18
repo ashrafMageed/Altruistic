@@ -32,8 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fixie">
-      <HintPath>..\packages\Fixie.0.0.1.106\lib\net45\Fixie.dll</HintPath>
+    <Reference Include="Fixie, Version=0.0.1.106, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\GitHub\fixie\src\Fixie.VisualStudio\bin\Debug\Fixie.dll</HintPath>
+    </Reference>
+    <Reference Include="Fixie.VisualStudio">
+      <HintPath>..\..\..\..\..\GitHub\fixie\src\Fixie.VisualStudio\bin\Debug\Fixie.VisualStudio.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions">
       <HintPath>..\packages\FluentAssertions.2.1.0.0\lib\net45\FluentAssertions.dll</HintPath>
