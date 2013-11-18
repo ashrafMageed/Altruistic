@@ -96,6 +96,21 @@ namespace Altruistic.Tests
             sut.TestInterfaceDependency.Should().Be(testDependency.Object);
         }
 
+        // rename this later
+        public void autoMock_WhenAccessingADependencyMethodNoRelevantToTheTest_ShouldAutomaticallyMockIt()
+        {
+            // Arrange
+            var sutCreator = new SUTCreator();
+            var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+
+            // Act
+            sut.MethodThatUsesBothDependencies();
+//            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+
+            // Assert
+            sutCreator.GetMock<ITestInterfaceDependency>().Verify(v => v.Test(It.IsAny<long>()), Times.Once());
+        }
+
         #region Sample Test Classes
 
         public class SUTWithMultipleConstructors
@@ -117,6 +132,12 @@ namespace Altruistic.Tests
             {
                 TestInterfaceDependency = testInterfaceDependency;
                 AbstractClassDependency = abstractClassDependency;
+            }
+
+            public void MethodThatUsesBothDependencies()
+            {
+                var complexType = TestInterfaceDependency.GetComplexType();
+                AbstractClassDependency.testClass(complexType.Test);
             }
         }
 
@@ -174,16 +195,18 @@ namespace Altruistic.Tests
 
     public abstract class AbstractClassDependency
     {
+        public AutoMockerTests.SUTWithPrimitiveParameters testClass(long test)
+        {
+            return new AutoMockerTests.SUTWithPrimitiveParameters(2);
+        }
     }
 
     public interface ITestInterfaceDependency
     {
-    }
-
-    public interface ITestInterfaceDependency2
-    {
+        object Test(long number);
+        AutoMockerTests.SUTWithPrimitiveParameters GetComplexType();
     }
 
     #endregion
 
-}
+    }
