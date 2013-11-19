@@ -80,7 +80,7 @@ namespace Altruistic.Tests
             var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
 
             // Assert
-            testDependency.Should().BeOfType<Mock<ITestInterfaceDependency>>();
+            testDependency.Should().BeOfType<MockingWrapper<ITestInterfaceDependency>>();
         }
 
         public void GetMock_WhenAMockIsRequested_ShouldReturnTheSameMockInstanceUsedInSUT()
@@ -102,6 +102,9 @@ namespace Altruistic.Tests
             // Arrange
             var sutCreator = new SUTCreator();
             var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+            sutCreator.GetMock<ITestInterfaceDependency>()
+                      .MockedInstance.Setup(x => x.GetComplexType())
+                      .Returns(new SUTWithPrimitiveParameters(12));
 
             // Act
             sut.MethodThatUsesBothDependencies();

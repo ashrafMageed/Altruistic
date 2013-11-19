@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoMockerTests.cs" />
+    <Compile Include="CustomConvention.cs" />
+    <Compile Include="MockingWrapperTests.cs" />
     <Compile Include="MockCreatorDecoratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

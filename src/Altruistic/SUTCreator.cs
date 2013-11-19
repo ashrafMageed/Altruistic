@@ -33,17 +33,24 @@ namespace Altruistic
 ;
             var parameterizedConstructor = constructors.OrderByDescending(x => x.GetParameters().Count()).First();
             var parameters = parameterizedConstructor.GetParameters().ToList();
-            var constructorParameters = parameters.Select(parameter => GetDefault(parameter.ParameterType, _mockCreator.CreateFromType));
+            var constructorParameters = parameters.Select(parameter => GetDefault(parameter.ParameterType, p =>
+                {
+                    var mock = _mockCreator.CreateFromType(parameter.ParameterType);
+                    var t = typeof (MockingWrapper<>).MakeGenericType(parameter.ParameterType).GetConstructors().First();
+                    return (MockingWrapper)t.Invoke(new object[] { mock });
+
+                }));
 
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
 
-        public Mock<T> GetMock<T>() where T : class
+        public MockingWrapper<T> GetMock<T>() where T : class
         {
-            return (Mock<T>)_mockCreator.CreateFromType(typeof (T));
+            var mock = (Mock<T>)_mockCreator.CreateFromType(typeof (T));
+            return new MockingWrapper<T>(mock);
         }
 
-        private static object GetDefault(Type type, Func<Type, Mock> getReferenceTypeDefault)
+        private static object GetDefault(Type type, Func<Type, MockingWrapper> getReferenceTypeDefault)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : getReferenceTypeDefault(type).Object;
         }
