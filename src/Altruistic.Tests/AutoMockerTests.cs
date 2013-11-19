@@ -71,17 +71,17 @@ namespace Altruistic.Tests
             sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
         }
 
-        public void GetMock_WhenAMockIsRequested_ShouldReturnMockOfType()
-        {
-            // Arrange
-            var sutCreator = new SUTCreator();
-
-            // Act
-            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
-
-            // Assert
-            testDependency.Should().BeOfType<MockingWrapper<ITestInterfaceDependency>>();
-        }
+//        public void GetMock_WhenAMockIsRequested_ShouldReturnMockOfType()
+//        {
+//            // Arrange
+//            var sutCreator = new SUTCreator();
+//
+//            // Act
+//            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+//
+//            // Assert
+//            testDependency.Should().BeOfType<Mock<ITestInterfaceDependency>>();
+//        }
 
         public void GetMock_WhenAMockIsRequested_ShouldReturnTheSameMockInstanceUsedInSUT()
         {
@@ -103,7 +103,7 @@ namespace Altruistic.Tests
             var sutCreator = new SUTCreator();
             var sut = sutCreator.Create<SUTWithMultipleConstructors>();
             sutCreator.GetMock<ITestInterfaceDependency>()
-                      .MockedInstance.Setup(x => x.GetComplexType())
+                      .Setup(x => x.GetComplexType())
                       .Returns(new SUTWithPrimitiveParameters(12));
 
             // Act
@@ -111,7 +111,7 @@ namespace Altruistic.Tests
 //            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
 
             // Assert
-            sutCreator.GetMock<ITestInterfaceDependency>().Verify(v => v.Test(It.IsAny<long>()), Times.Once());
+            sutCreator.GetMock<AbstractClassDependency>().Verify(v => v.TestClass(It.IsAny<long>()), Times.Once());
         }
 
         #region Sample Test Classes
@@ -140,7 +140,7 @@ namespace Altruistic.Tests
             public void MethodThatUsesBothDependencies()
             {
                 var complexType = TestInterfaceDependency.GetComplexType();
-                AbstractClassDependency.testClass(complexType.Test);
+                AbstractClassDependency.TestClass(complexType.Test);
             }
         }
 
@@ -198,7 +198,7 @@ namespace Altruistic.Tests
 
     public abstract class AbstractClassDependency
     {
-        public AutoMockerTests.SUTWithPrimitiveParameters testClass(long test)
+        public virtual AutoMockerTests.SUTWithPrimitiveParameters TestClass(long test)
         {
             return new AutoMockerTests.SUTWithPrimitiveParameters(2);
         }

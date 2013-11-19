@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using Castle.DynamicProxy;
 using Moq;
 
 namespace Altruistic
@@ -33,26 +35,29 @@ namespace Altruistic
 ;
             var parameterizedConstructor = constructors.OrderByDescending(x => x.GetParameters().Count()).First();
             var parameters = parameterizedConstructor.GetParameters().ToList();
-            var constructorParameters = parameters.Select(parameter => GetDefault(parameter.ParameterType, p =>
-                {
-                    var mock = _mockCreator.CreateFromType(parameter.ParameterType);
-                    var t = typeof (MockingWrapper<>).MakeGenericType(parameter.ParameterType).GetConstructors().First();
-                    return (MockingWrapper)t.Invoke(new object[] { mock });
-
-                }));
-
+            var constructorParameters = parameters.Select(parameter => GetParameterValue(parameter.ParameterType));
+            
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
 
-        public MockingWrapper<T> GetMock<T>() where T : class
+        public object GetMockObject<T>() where T : class
         {
-            var mock = (Mock<T>)_mockCreator.CreateFromType(typeof (T));
-            return new MockingWrapper<T>(mock);
+            return GetMock<T>().Object;
         }
 
-        private static object GetDefault(Type type, Func<Type, MockingWrapper> getReferenceTypeDefault)
+        public Mock<T> GetMock<T>() where T : class
         {
-            return type.IsValueType ? Activator.CreateInstance(type) : getReferenceTypeDefault(type).Object;
+            return _mockCreator.Get<T>();
+        }
+
+        private object GetParameterValue(Type type)
+        {
+            if (type.IsValueType)
+                return Activator.CreateInstance(type);
+
+            // TODO: remove magic string
+            var genericMethod = GetType().GetMethod("GetMockObject").MakeGenericMethod(type);
+            return genericMethod.Invoke(this, null);
         }
     }
 }

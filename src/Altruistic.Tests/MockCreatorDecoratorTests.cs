@@ -11,10 +11,10 @@ namespace Altruistic.Tests
             var mockCreatorDecorator = sutCreator.Create<MockCreatorDecorator>();
 
             // Act
-            mockCreatorDecorator.CreateFromType(typeof(TestClass));
+            mockCreatorDecorator.Get<TestClass>();
 
             // Assert
-            sutCreator.GetMock<ICreateMock>().Verify(x => x.CreateFromType(typeof(TestClass)), Times.Once());
+            sutCreator.GetMock<ICreateMock>().Verify(x => x.Get<TestClass>(), Times.Once());
         }
 
         public void CreateMock_WhenTypeIsInCache_ShouldReturnTypeFromCache()
@@ -24,11 +24,11 @@ namespace Altruistic.Tests
             var mockCreatorDecorator = sutCreator.Create<MockCreatorDecorator>();
 
             // Act
-            mockCreatorDecorator.CreateFromType(typeof (TestClass));
-            mockCreatorDecorator.CreateFromType(typeof(TestClass));
+            mockCreatorDecorator.Get<TestClass>();
+            mockCreatorDecorator.Get<TestClass>();
 
             // Assert
-            sutCreator.GetMock<ICreateMock>().Verify(x => x.CreateFromType(typeof(TestClass)), Times.Once());
+            sutCreator.GetMock<ICreateMock>().Verify(x => x.Get<TestClass>(), Times.Once());
         }
 
         public class TestClass {}

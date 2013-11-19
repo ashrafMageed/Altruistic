@@ -1,14 +1,13 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 
 namespace Altruistic
 {
+    // TODO: I don't need this class anymore
     public class MoqMockCreator : ICreateMock
     {
-        public Mock CreateFromType(Type type)
+        public Mock<T> Get<T>() where T : class
         {
-            var genericConstructor = typeof(Mock<>).MakeGenericType(type).GetConstructor(Type.EmptyTypes);
-            return (Mock)genericConstructor.Invoke(new object[0]);
+            return new Mock<T>();
         }
     }
 }

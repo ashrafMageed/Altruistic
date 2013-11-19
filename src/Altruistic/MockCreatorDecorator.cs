@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.DynamicProxy;
 using Moq;
 
 namespace Altruistic
@@ -7,22 +8,27 @@ namespace Altruistic
     public class MockCreatorDecorator : ICreateMock
     {
         private readonly ICreateMock _decoratedMockCreator;
-        private readonly IDictionary<Type, Mock> _cachedMocks = new Dictionary<Type, Mock>(); 
+        private readonly IDictionary<Type, object> _cachedMocks = new Dictionary<Type, object>(); 
 
         public MockCreatorDecorator(ICreateMock decoratedMockCreator)
         {
             _decoratedMockCreator = decoratedMockCreator;
         }
 
-        public Mock CreateFromType(Type type)
+        // TODO: should not expose Moq's Mock... this is a leaky abstraction and should be replaced with an adapter
+        // if i use an adapter, then do i really need the proxy generator ??
+        public Mock<T> Get<T>() where T : class
         {
-            if (_cachedMocks.ContainsKey(type))
-                return _cachedMocks[type];
+            if (_cachedMocks.ContainsKey(typeof(T)))
+                return (Mock<T>)_cachedMocks[typeof(T)];
 
-            var mock = _decoratedMockCreator.CreateFromType(type);
-            _cachedMocks.Add(type, mock);
+            // TODO: don't really need this call
+            var mock = _decoratedMockCreator.Get<T>();
 
-            return mock;
+            var proxiedMock = new ProxyGenerator().CreateClassProxy(typeof(Mock<T>), new Interceptor());
+            _cachedMocks.Add(typeof(T), proxiedMock);
+
+            return (Mock<T>)proxiedMock;
         }
     }
 }
