@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
-using Castle.DynamicProxy;
 using Moq;
 
 namespace Altruistic
@@ -40,7 +38,7 @@ namespace Altruistic
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
 
-        public object GetMockObject<T>() where T : class
+        private object GetMockObject<T>() where T : class
         {
             return GetMock<T>().Object;
         }

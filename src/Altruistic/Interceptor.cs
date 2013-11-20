@@ -16,5 +16,6 @@ namespace Altruistic
             invocation.Proceed();
             var returnValue = invocation.ReturnValue;
         }
+        
     }
 }

@@ -19,12 +19,12 @@ namespace Altruistic
         }
     }
 
-    public class MockingWrapper<T> : MockingWrapper where T : class
+    public class MockingWrapper<T> /*: MockingWrapper*/ where T : class
     {
         private readonly Mock<T> _proxiedInstance;
         private IList<string> _setMethods = new List<string>();
 
-        public MockingWrapper(Mock<T> proxiedInstance) : base(new ProxyGenerator().CreateClassProxy<Mock<T>>(new Interceptor()))
+        public MockingWrapper(Mock<T> proxiedInstance)
         {
             _proxiedInstance = proxiedInstance;
         }
@@ -42,10 +42,10 @@ namespace Altruistic
             _proxiedInstance.Setup(expression);
         }
 
-        public Mock<T> MockedInstance 
-        {
-            get { return _proxiedInstance; }
-        }
+//        public Mock<T> MockedInstance 
+//        {
+//            get { return _proxiedInstance; }
+//        }
 
         internal string CreateUniqueKey(Type type, MethodInfo method)
         {
