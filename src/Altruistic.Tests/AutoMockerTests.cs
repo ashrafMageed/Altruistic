@@ -6,70 +6,74 @@ namespace Altruistic.Tests
 {
     public class AutoMockerTests
     {
-        public void Create_WhenCreatingSUTWithNoParameters_ShouldReturnANewSUT()
+        public class CreateMethodTests
         {
-            // Arrange
-            var sutCreator = new SUTCreator();
-            var expectedSUT = new SUT();
 
-            // Act
-            var sut = sutCreator.Create<SUT>();
+            public void WhenCreatingSUTWithNoParameters_ShouldReturnANewSUT()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
+                var expectedSUT = new SUT();
 
-            // Assert
-            sut.ShouldBeEquivalentTo(expectedSUT);
-        }
+                // Act
+                var sut = sutCreator.Create<SUT>();
 
-        public void Create_WhenCreatingSUTWithValueParameters_ShouldReturnANewSUTWithParametersSetToZero()
-        {
-            // Arrange
-            var sutCreator = new SUTCreator();
-            var expectedSUT = new SUTWithPrimitiveParameters(0);
+                // Assert
+                sut.ShouldBeEquivalentTo(expectedSUT);
+            }
 
-            // Act
-            var sut = sutCreator.Create<SUTWithPrimitiveParameters>();
+            public void WhenCreatingSUTWithValueParameters_ShouldReturnANewSUTWithParametersSetToZero()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
+                var expectedSUT = new SUTWithPrimitiveParameters(0);
 
-            // Assert
-            sut.ShouldBeEquivalentTo(expectedSUT);
-        }
+                // Act
+                var sut = sutCreator.Create<SUTWithPrimitiveParameters>();
 
-        public void Create_WhenCreatingSUTWithMultipleValueTypePrimitiveParameters_ShouldReturnANewSUTWithParametersSetToZero()
-        {
-            // Arrange
-            var sutCreator = new SUTCreator();
-            var expectedSUT = new SUTWithPrimitiveParameters2(0,0,0,0,0);
+                // Assert
+                sut.ShouldBeEquivalentTo(expectedSUT);
+            }
 
-            // Act
-            var sut = sutCreator.Create<SUTWithPrimitiveParameters2>();
+            public void WhenCreatingSUTWithMultipleValueTypePrimitiveParameters_ShouldReturnANewSUTWithParametersSetToZero()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
+                var expectedSUT = new SUTWithPrimitiveParameters2(0,0,0,0,0);
 
-            // Assert
-            sut.ShouldBeEquivalentTo(expectedSUT);
-        }
+                // Act
+                var sut = sutCreator.Create<SUTWithPrimitiveParameters2>();
 
-        public void Create_WhenCreatingSUTWithReferenceTypes_ShouldCreateThemAsMockDependencies()
-        {
-            // Arrange
-            var sutCreator = new SUTCreator();
+                // Assert
+                sut.ShouldBeEquivalentTo(expectedSUT);
+            }
 
-            // Act
-            var sut = sutCreator.Create<SUTWithReferenceDependencies>();
+            public void WhenCreatingSUTWithReferenceTypes_ShouldCreateThemAsMockDependencies()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
 
-            // Assert
-            sut.AbstractClassDependency.Should().BeAssignableTo<AbstractClassDependency>();
-            sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
-        }
+                // Act
+                var sut = sutCreator.Create<SUTWithReferenceDependencies>();
 
-        public void Create_WhenSutHasMultipleConstructors_ShouldUseTheOneWithTheMostParameters()
-        {
-            // Arrange
-            var sutCreator = new SUTCreator();
+                // Assert
+                sut.AbstractClassDependency.Should().BeAssignableTo<AbstractClassDependency>();
+                sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
+            }
 
-            // Act
-            var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+            public void WhenSutHasMultipleConstructors_ShouldUseTheOneWithTheMostParameters()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
 
-            // Assert
-            sut.AbstractClassDependency.Should().BeAssignableTo<AbstractClassDependency>();
-            sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
-        }
+                // Act
+                var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+
+                // Assert
+                sut.AbstractClassDependency.Should().BeAssignableTo<AbstractClassDependency>();
+                sut.TestInterfaceDependency.Should().BeAssignableTo<ITestInterfaceDependency>();
+            }
+    }
 
 //        public void GetMock_WhenAMockIsRequested_ShouldReturnMockOfType()
 //        {
@@ -83,20 +87,24 @@ namespace Altruistic.Tests
 //            testDependency.Should().BeOfType<Mock<ITestInterfaceDependency>>();
 //        }
 
-        public void GetMock_WhenAMockIsRequested_ShouldReturnTheSameMockInstanceUsedInSUT()
+        public class GetMockMethodTests
         {
-            // Arrange
-            var sutCreator = new SUTCreator();
 
-            // Act
-            var sut = sutCreator.Create<SUTWithMultipleConstructors>();
-            var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+            public void WhenAMockIsRequested_ShouldReturnTheSameMockInstanceUsedInSUT()
+            {
+                // Arrange
+                var sutCreator = new SUTCreator();
 
-            // Assert
-            sut.TestInterfaceDependency.Should().Be(testDependency.Object);
+                // Act
+                var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+                var testDependency = sutCreator.GetMock<ITestInterfaceDependency>();
+
+                // Assert
+                sut.TestInterfaceDependency.Should().Be(testDependency.Object);
+            }
         }
 
-        // rename this later
+        // rename this and move it to another class
         public void autoMock_WhenAccessingADependencyMethodNoRelevantToTheTest_ShouldAutomaticallyMockIt()
         {
             // Arrange

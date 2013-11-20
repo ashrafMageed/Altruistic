@@ -57,5 +57,6 @@ namespace Altruistic
             var genericMethod = GetType().GetMethod("GetMockObject").MakeGenericMethod(type);
             return genericMethod.Invoke(this, null);
         }
+
     }
 }
