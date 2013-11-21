@@ -1,7 +1,4 @@
-﻿using System;
-using Moq;
-
-namespace Altruistic
+﻿namespace Altruistic
 {
     public interface ICreateMock
     {
