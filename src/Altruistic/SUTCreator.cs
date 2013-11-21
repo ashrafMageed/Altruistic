@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Moq;
 
 namespace Altruistic
@@ -8,7 +9,7 @@ namespace Altruistic
     {
         private readonly ICreateMock _mockCreator;
 
-        public SUTCreator() : this(new MockCreatorDecorator(new MoqMockCreator())){}
+        public SUTCreator() : this(new MockCreatorDecorator(new MockCreator())){}
 
         public SUTCreator(ICreateMock mockCreator)
         {
@@ -38,12 +39,12 @@ namespace Altruistic
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
 
-        private object GetMockObject<T>() where T : class
+        public object GetMockObject<T>() where T : class
         {
             return GetMock<T>().Object;
         }
 
-        public Mock<T> GetMock<T>() where T : class
+        public MockingWrapper<T> GetMock<T>() where T : class
         {
             return _mockCreator.Get<T>();
         }

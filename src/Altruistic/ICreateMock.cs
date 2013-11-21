@@ -6,6 +6,6 @@ namespace Altruistic
     public interface ICreateMock
     {
 
-        Mock<T> Get<T>() where T : class;
+        MockingWrapper<T> Get<T>() where T : class;
     }
 }

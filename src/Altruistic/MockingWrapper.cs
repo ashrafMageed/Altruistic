@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using Castle.DynamicProxy;
 using Moq;
 
 namespace Altruistic
@@ -42,10 +41,10 @@ namespace Altruistic
             _proxiedInstance.Setup(expression);
         }
 
-//        public Mock<T> MockedInstance 
-//        {
-//            get { return _proxiedInstance; }
-//        }
+        public object Object
+        {
+            get { return _proxiedInstance.Object; }
+        }
 
         internal string CreateUniqueKey(Type type, MethodInfo method)
         {

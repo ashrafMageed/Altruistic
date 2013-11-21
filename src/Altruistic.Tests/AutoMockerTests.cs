@@ -110,9 +110,9 @@ namespace Altruistic.Tests
             // Arrange
             var sutCreator = new SUTCreator();
             var sut = sutCreator.Create<SUTWithMultipleConstructors>();
-            sutCreator.GetMock<ITestInterfaceDependency>()
-                      .Setup(x => x.GetComplexType())
-                      .Returns(new SUTWithPrimitiveParameters(12));
+//            sutCreator.GetMock<ITestInterfaceDependency>()
+//                      .Setup(x => x.GetComplexType())
+//                      .Returns(new SUTWithPrimitiveParameters(12));
 
             // Act
             sut.MethodThatUsesBothDependencies();

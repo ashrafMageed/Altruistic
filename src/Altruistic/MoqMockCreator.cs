@@ -3,11 +3,11 @@
 namespace Altruistic
 {
     // TODO: I don't need this class anymore
-    public class MoqMockCreator : ICreateMock
+    public class MockCreator : ICreateMock
     {
-        public Mock<T> Get<T>() where T : class
+        public MockingWrapper<T> Get<T>() where T : class
         {
-            return new Mock<T>();
+            return new MockingWrapper<T>(new Mock<T>());
         }
     }
 }
