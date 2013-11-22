@@ -4,21 +4,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Castle.DynamicProxy;
 using Moq;
 
 namespace Altruistic
 {
-    public class MockingWrapper
+    public abstract class Wrapper
     {
-        public object Object { get; private set; }
-
-        public MockingWrapper(Mock mock)
-        {
-            Object = mock.Object;
-        }
+        public abstract bool MethodHasSetup(Type type, MethodInfo method);
     }
 
-    public class MockingWrapper<T> /*: MockingWrapper*/ where T : class
+    public class MockingWrapper<T> : Wrapper where T : class
     {
         private readonly Mock<T> _proxiedInstance;
         private IList<string> _setMethods = new List<string>();
@@ -36,14 +32,17 @@ namespace Altruistic
         public void Setup<TResult>(Expression<Func<T, TResult>> expression)
         {
             var method = GetMethod(expression);
-            var uniqueKey = CreateUniqueKey(typeof (T), method);
+            var uniqueKey = CreateUniqueKey(typeof(T), method);
             _setMethods.Add(uniqueKey);
             _proxiedInstance.Setup(expression);
         }
 
-        public object Object
+        public T Object
         {
-            get { return _proxiedInstance.Object; }
+            get
+            {
+                return typeof(T).IsInterface ? (T)new ProxyGenerator().CreateInterfaceProxyWithoutTarget(typeof(T), new Altruistic.Interceptor<MockingWrapper<T>>(this)) : _proxiedInstance.Object;
+            }
         }
 
         internal string CreateUniqueKey(Type type, MethodInfo method)
@@ -58,6 +57,8 @@ namespace Altruistic
             return stringBuilder.ToString();
         }
 
+
+
         internal MethodInfo GetMethod<TTarget, TResult>(Expression<Func<TTarget, TResult>> expression)
         {
             var methodCallExpression = expression.Body as MethodCallExpression;
@@ -68,5 +69,11 @@ namespace Altruistic
             return methodCallExpression.Method;
         }
 
+
+        public override bool MethodHasSetup(Type type, MethodInfo method)
+        {
+            var key = CreateUniqueKey(type, method);
+            return _setMethods.Contains(key);
+        }
     }
 }

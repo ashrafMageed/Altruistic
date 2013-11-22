@@ -32,7 +32,7 @@ namespace Altruistic
 ;
             var parameterizedConstructor = constructors.OrderByDescending(x => x.GetParameters().Count()).First();
             var parameters = parameterizedConstructor.GetParameters().ToList();
-            var constructorParameters = parameters.Select(parameter => GetParameterValue(parameter.ParameterType));
+            var constructorParameters = parameters.Select(parameter => CreateParameter(parameter.ParameterType));
             
             return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
         }
@@ -47,7 +47,7 @@ namespace Altruistic
             return _mockCreator.Get<T>();
         }
 
-        private object GetParameterValue(Type type)
+        private object CreateParameter(Type type)
         {
             if (type.IsValueType)
                 return Activator.CreateInstance(type);

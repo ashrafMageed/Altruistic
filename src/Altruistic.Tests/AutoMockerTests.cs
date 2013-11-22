@@ -197,6 +197,11 @@ namespace Altruistic.Tests
         {
             public string test { get; private set; }
         }
+
+        public class TestComplexType
+        {
+            public long Test { get; set; }
+        }
     }
 
     public abstract class AbstractClassDependency2
@@ -215,7 +220,7 @@ namespace Altruistic.Tests
     public interface ITestInterfaceDependency
     {
         object Test(long number);
-        AutoMockerTests.SUTWithPrimitiveParameters GetComplexType();
+        AutoMockerTests.TestComplexType GetComplexType();
     }
 
     #endregion
