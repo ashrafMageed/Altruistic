@@ -17,7 +17,7 @@ namespace Altruistic
     public class MockingWrapper<T> : Wrapper where T : class
     {
         private readonly Mock<T> _proxiedInstance;
-        private IList<string> _setMethods = new List<string>();
+        private readonly IList<string> _setMethods = new List<string>();
 
         public MockingWrapper(Mock<T> proxiedInstance)
         {
@@ -29,19 +29,19 @@ namespace Altruistic
             _proxiedInstance.Verify(expression, times);
         }
 
-        public void Setup<TResult>(Expression<Func<T, TResult>> expression)
+        public void Setup<TResult>(Expression<Func<T, TResult>> expression, TResult returnObject)
         {
-            var method = GetMethod(expression);
+            var method = Utility.GetMethod(expression);
             var uniqueKey = CreateUniqueKey(typeof(T), method);
             _setMethods.Add(uniqueKey);
-            _proxiedInstance.Setup(expression);
+            _proxiedInstance.Setup(expression).Returns(returnObject);
         }
 
         public T Object
         {
             get
             {
-                return typeof(T).IsInterface ? (T)new ProxyGenerator().CreateInterfaceProxyWithoutTarget(typeof(T), new Altruistic.Interceptor<MockingWrapper<T>>(this)) : _proxiedInstance.Object;
+                return typeof(T).IsInterface ? (T)new ProxyGenerator().CreateInterfaceProxyWithTarget(typeof(T), _proxiedInstance.Object, new Interceptor<MockingWrapper<T>>(this)) : _proxiedInstance.Object;
             }
         }
 
@@ -56,19 +56,6 @@ namespace Altruistic
             parameterInfo.ToList().ForEach(parameter => stringBuilder.Append(parameter.ParameterType.Name));
             return stringBuilder.ToString();
         }
-
-
-
-        internal MethodInfo GetMethod<TTarget, TResult>(Expression<Func<TTarget, TResult>> expression)
-        {
-            var methodCallExpression = expression.Body as MethodCallExpression;
-            if (methodCallExpression == null)
-            {
-                throw new ArgumentException("expression must be a method call");
-            }
-            return methodCallExpression.Method;
-        }
-
 
         public override bool MethodHasSetup(Type type, MethodInfo method)
         {

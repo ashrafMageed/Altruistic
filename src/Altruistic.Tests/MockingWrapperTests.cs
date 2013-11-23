@@ -7,35 +7,6 @@ namespace Altruistic.Tests
 {
     public class MockingWrapperTests
     {
-        public class GetMethodTests
-        {
-            public void GivenAMethodCallExpression_ShouldExtractMethodFromTheExpression()
-            {
-                // Arrange
-                Expression<Func<string, string>> expression = s => s.Insert(3, "abc");
-                var mockingWrapper = new MockingWrapper<CreateUniqueKeyTests.ITestData>(new Mock<CreateUniqueKeyTests.ITestData>());
-
-                // Act
-                var method = mockingWrapper.GetMethod(expression);
-
-                // Assert
-                method.Name.Should().Be("Insert");
-            }
-
-            public void GivenANonMethodCallExpression_ShouldThrowAnArgumentException()
-            {
-                // Arrange
-                Expression<Func<string, int>> expression = s => s.Length;
-                var mockingWrapper = new MockingWrapper<CreateUniqueKeyTests.ITestData>(new Mock<CreateUniqueKeyTests.ITestData>());
-
-                // Act
-                Action act = () => mockingWrapper.GetMethod(expression);
-
-                // Assert
-                act.ShouldThrow<ArgumentException>();
-            }
-        }
-
         public class CreateUniqueKeyTests
         {
             public void WhenMethodHasNoParameters_ShouldReturnTypeAndMethodName()
@@ -43,7 +14,7 @@ namespace Altruistic.Tests
                 // Arrange
                 Expression<Func<string, string>> expression = s => s.Normalize();
                 var mockingWrapper = new MockingWrapper<ITestData>(new Mock<ITestData>());
-                var method = mockingWrapper.GetMethod(expression);
+                var method = Utility.GetMethod(expression);
 
                 // Act
                 var uniqueName = mockingWrapper.CreateUniqueKey(typeof (string), method);
@@ -58,7 +29,7 @@ namespace Altruistic.Tests
                 // Arrange
                 Expression<Func<string, string>> expression = s => s.Replace("tr", "rt");
                 var mockingWrapper = new MockingWrapper<ITestData>(new Mock<ITestData>());
-                var method = mockingWrapper.GetMethod(expression);
+                var method = Utility.GetMethod(expression);
 
                 // Act
                 var uniqueName = mockingWrapper.CreateUniqueKey(typeof(string), method);
@@ -72,7 +43,7 @@ namespace Altruistic.Tests
                 // Arrange
                 Expression<Func<string, string>> expression = s => s.Replace('.', '_');
                 var mockingWrapper = new MockingWrapper<ITestData>(new Mock<ITestData>());
-                var method = mockingWrapper.GetMethod(expression);
+                var method = Utility.GetMethod(expression);
 
                 // Act
                 var uniqueName = mockingWrapper.CreateUniqueKey(typeof(string), method);
