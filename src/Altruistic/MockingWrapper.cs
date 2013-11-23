@@ -37,11 +37,19 @@ namespace Altruistic
             _proxiedInstance.Setup(expression).Returns(returnObject);
         }
 
+        private T _object;
         public T Object
         {
             get
             {
-                return typeof(T).IsInterface ? (T)new ProxyGenerator().CreateInterfaceProxyWithTarget(typeof(T), _proxiedInstance.Object, new Interceptor<MockingWrapper<T>>(this)) : _proxiedInstance.Object;
+                if (_object == null)
+                {
+                    _object =   typeof(T).IsInterface ?
+                                (T)new ProxyGenerator().CreateInterfaceProxyWithTarget(typeof(T), _proxiedInstance.Object, new Interceptor<MockingWrapper<T>>(this)) :
+                                _proxiedInstance.Object;
+                }
+
+                return _object;
             }
         }
 
