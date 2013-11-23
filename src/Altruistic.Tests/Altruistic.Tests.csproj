@@ -59,6 +59,7 @@
     <Compile Include="MockingWrapperTests.cs" />
     <Compile Include="MockCreatorDecoratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UtilityTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -122,6 +122,21 @@ namespace Altruistic.Tests
             sutCreator.GetMock<AbstractClassDependency>().Verify(v => v.TestClass(It.IsAny<long>()), Times.Once());
         }
 
+        public void autoMock_WhenAccessingADependencyMethodNoRelevantToTheTest_ShouldInvokeSetupsAgainstIt()
+        {
+            // Arrange
+            var sutCreator = new SUTCreator();
+            var sut = sutCreator.Create<SUTWithMultipleConstructors>();
+                        sutCreator.GetMock<ITestInterfaceDependency>()
+                                  .Setup(x => x.GetComplexType(), new TestComplexType{Test = 99});
+
+            // Act
+            sut.MethodThatUsesBothDependencies();
+
+            // Assert
+            sutCreator.GetMock<AbstractClassDependency>().Verify(v => v.TestClass(99), Times.Once());
+        }
+
         #region Sample Test Classes
 
         public class SUTWithMultipleConstructors

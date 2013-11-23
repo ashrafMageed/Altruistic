@@ -57,6 +57,7 @@
     <Compile Include="MoqMockCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SUTCreator.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
