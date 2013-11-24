@@ -24,6 +24,16 @@ namespace Altruistic.Tests
                 result.Test.Should().NotBe(0);
 
             }
+
+            public void WhenCreatingObjectWithNoDefaultContructor_ShouldCreateObjectSuccessfully()
+            {
+                var sutCreator = new SUTCreator();
+                var sut = sutCreator.Create<ObjectBuilder>();
+
+                var result = sut.CreateNew<AutoMockerTests.SUTWithPrimitiveParameters>();
+
+                result.Should().NotBeNull();
+            }
         }
 
         public class CreateNewWithConstructorMethodTests
@@ -36,40 +46,6 @@ namespace Altruistic.Tests
                 var result = sut.CreateNewWithConstructor(() => new AutoMockerTests.SUTWithPrimitiveParameters(12));
 
                 result.Should().NotBeNull();
-            }
-
-            public void WhenCreatingNewObjectThroughConstructor_ShouldInitialiseAllObjectProperties()
-            {
-                var type = typeof(AutoMockerTests.SUTWithPrimitiveParameters);
-
-                var call = Expression.Call(GetType(), "CreateLambda", new[] {type}); //Expression.Lambda<Func<object>>(ctor, null);
-
-                var result = Expression.Lambda(call).Compile().DynamicInvoke();
-                result.Should().NotBeNull();
-                
-            }
-
-            public static TObject CreateLambda<TObject>()
-            {
-                var type = typeof(TObject);
-                var constructor = type.GetConstructors().First();
-                var parameters = constructor.GetParameters();
-
-                var arguments = parameters.Select(p => CreateDefaultExpressionConstant(p.ParameterType));
-                var ctor = Expression.New(constructor, arguments);
-                var sutCreator = new SUTCreator();
-                var sut = sutCreator.Create<ObjectBuilder>();
-                var expression = Expression.Lambda<Func<TObject>>(ctor, null);
-                return sut.CreateNewWithConstructor(expression);
-
-            }
-
-            public static Expression CreateDefaultExpressionConstant(Type type)
-            {
-                if (type.IsValueType)
-                    return Expression.Constant(Activator.CreateInstance(type));
-
-                return Expression.Constant(null, type);
             }
         }
     }
