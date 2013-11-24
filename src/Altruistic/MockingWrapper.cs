@@ -45,7 +45,7 @@ namespace Altruistic
                 if (_object == null)
                 {
                     _object =   typeof(T).IsInterface ?
-                                (T)new ProxyGenerator().CreateInterfaceProxyWithTarget(typeof(T), _proxiedInstance.Object, new Interceptor<MockingWrapper<T>>(this)) :
+                                (T)new ProxyGenerator().CreateInterfaceProxyWithTarget(typeof(T), _proxiedInstance.Object, new Interceptor<MockingWrapper<T>>(this, new TestObjectCreator(new ObjectBuilder()))) :
                                 _proxiedInstance.Object;
                 }
 
