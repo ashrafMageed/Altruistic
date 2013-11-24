@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using FizzWare.NBuilder;
 
 namespace Altruistic
@@ -6,7 +7,7 @@ namespace Altruistic
     public interface IObjectBuilderAdapter
     {
         TObject CreateNew<TObject>();
-        TObject CreateNew<TObject>(Func<TObject> constructor);
+        TObject CreateNewWithConstructor<TObject>(Expression<Func<TObject>> constructor);
     }
 
     public interface ICreateTestObject
@@ -34,9 +35,9 @@ namespace Altruistic
             return default(TObject);
         }
 
-        public TObject CreateNew<TObject>(Func<TObject> constructor)
+        public TObject CreateNewWithConstructor<TObject>(Expression<Func<TObject>> constructor)
         {
-            throw new NotImplementedException();
+            return Builder<TObject>.CreateNew().WithConstructor(constructor).Build();
         }
     }
 
