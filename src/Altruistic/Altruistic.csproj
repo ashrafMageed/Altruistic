@@ -50,15 +50,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICreateTestObject.cs" />
     <Compile Include="Interceptor.cs" />
     <Compile Include="ICreateMock.cs" />
+    <Compile Include="IObjectBuilderAdapter.cs" />
     <Compile Include="MockCreatorDecorator.cs" />
     <Compile Include="MockingWrapper.cs" />
-    <Compile Include="MoqMockCreator.cs" />
+    <Compile Include="MockCreator.cs" />
+    <Compile Include="ObjectBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SUTCreator.cs" />
     <Compile Include="TestObjectCreator.cs" />
     <Compile Include="Utility.cs" />
+    <Compile Include="Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

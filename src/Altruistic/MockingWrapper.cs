@@ -9,11 +9,6 @@ using Moq;
 
 namespace Altruistic
 {
-    public abstract class Wrapper
-    {
-        public abstract bool MethodHasSetup(Type type, MethodInfo method);
-    }
-
     public class MockingWrapper<T> : Wrapper where T : class
     {
         private readonly Mock<T> _proxiedInstance;
