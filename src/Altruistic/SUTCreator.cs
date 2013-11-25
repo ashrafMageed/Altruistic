@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Altruistic
 {
@@ -30,11 +32,16 @@ namespace Altruistic
             if (parameterlessConstructor != null && constructors.Count == 1)
                 return (T)Activator.CreateInstance(typeof(T));
 ;
-            var parameterizedConstructor = constructors.OrderByDescending(x => x.GetParameters().Count()).First();
+            var parameterizedConstructor = Utility.GetConstructorWithMostParameters(constructors);
+            var populatedConstructorParameters = GetPopulatedConstructorParameters(parameterizedConstructor);
+
+            return (T)Activator.CreateInstance(typeof(T), populatedConstructorParameters.ToArray());
+        }
+
+        private IEnumerable<object> GetPopulatedConstructorParameters(ConstructorInfo parameterizedConstructor)
+        {
             var parameters = parameterizedConstructor.GetParameters().ToList();
-            var constructorParameters = parameters.Select(parameter => CreateParameter(parameter.ParameterType));
-            
-            return (T)Activator.CreateInstance(typeof(T), constructorParameters.ToArray());
+            return parameters.Select(parameter => CreateParameter(parameter.ParameterType));
         }
 
         public object GetMockObject<T>() where T : class
@@ -52,8 +59,7 @@ namespace Altruistic
             if (type.IsValueType)
                 return Activator.CreateInstance(type);
 
-            // TODO: remove magic string
-            var genericMethod = GetType().GetMethod("GetMockObject").MakeGenericMethod(type);
+            var genericMethod = Utility.GetMethod(GetMockObject<object>).MakeGenericMethod(type);
             return genericMethod.Invoke(this, null);
         }
 

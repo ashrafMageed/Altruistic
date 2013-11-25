@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using Castle.DynamicProxy;
+﻿using Castle.DynamicProxy;
 
 namespace Altruistic
 {
@@ -25,17 +22,8 @@ namespace Altruistic
                 return;
 
             var type = invocation.Method.ReturnType;
-            var dummyReturn = InvokeParameterlessGenericMethod(Utility.GetMethod(_testObjectCreator.CreateDummy<object>), type);
+            var dummyReturn = Utility.InvokeParameterlessGenericMethod(_testObjectCreator, Utility.GetMethod(_testObjectCreator.CreateDummy<object>), type);
             invocation.ReturnValue = dummyReturn;
-        }
-
-        private object InvokeParameterlessGenericMethod(MethodInfo method, Type genericMethodType)
-        {
-            if (method == null)
-                throw new ArgumentNullException();
-
-            var call = Expression.Call(Expression.Constant(_testObjectCreator), method.Name, new[] { genericMethodType });
-            return Expression.Lambda(call).Compile().DynamicInvoke();
         }
 
     }

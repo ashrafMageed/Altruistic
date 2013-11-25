@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Altruistic
 {
-    // don't need this class anymore.... this functionality can go into the mocking wrapper/adapter
     public class MockCreatorDecorator : ICreateMock
     {
         private readonly ICreateMock _decoratedMockCreator;
@@ -14,8 +13,6 @@ namespace Altruistic
             _decoratedMockCreator = decoratedMockCreator;
         }
 
-        // TODO: should not expose Moq's Mock... this is a leaky abstraction and should be replaced with an adapter
-        // if i use an adapter, then do i really need the proxy generator ??
         public MockingWrapper<T> Get<T>() where T : class
         {
             if (_cachedMocks.ContainsKey(typeof(T)))

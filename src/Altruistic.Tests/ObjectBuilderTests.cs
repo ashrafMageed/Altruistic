@@ -43,7 +43,7 @@ namespace Altruistic.Tests
                 var sutCreator = new SUTCreator();
                 var sut = sutCreator.Create<ObjectBuilder>();
 
-                var result = sut.CreateNewWithConstructor(() => new AutoMockerTests.SUTWithPrimitiveParameters(12));
+                var result = sut.CreateNewWithSpecificConstructor(() => new AutoMockerTests.SUTWithPrimitiveParameters(12));
 
                 result.Should().NotBeNull();
             }

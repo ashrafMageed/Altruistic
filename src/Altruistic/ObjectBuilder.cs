@@ -13,26 +13,22 @@ namespace Altruistic
         public TObject CreateNew<TObject>()
         {
             var parameterlessConstructor = typeof(TObject).GetConstructor(Type.EmptyTypes);
-            if (parameterlessConstructor != null)
-                return Builder<TObject>.CreateNew().Build();
-
-            return CreateObjectWithNoDefaultConstructor<TObject>();
+            return parameterlessConstructor != null ? Builder<TObject>.CreateNew().Build() : CreateObjectWithNoDefaultConstructor<TObject>();
         }
 
-        public TObject CreateNewWithConstructor<TObject>(Expression<Func<TObject>> constructor)
+        public TObject CreateNewWithSpecificConstructor<TObject>(Expression<Func<TObject>> constructor)
         {
             return Builder<TObject>.CreateNew().WithConstructor(constructor).Build();
         }
 
         private TObject CreateObjectWithNoDefaultConstructor<TObject>()
         {
-            // TODO: use MaxBy from MoreLinq as this is currently very ineffecient
-            var parameterizedConstructor = typeof(TObject).GetConstructors().OrderByDescending(x => x.GetParameters().Count()).First();
+            var parameterizedConstructor = Utility.GetConstructorWithMostParameters(typeof(TObject).GetConstructors());
             var arguments = GetDefaultArguments(parameterizedConstructor);
             var ctor = Expression.New(parameterizedConstructor, arguments);
             var expression = Expression.Lambda<Func<TObject>>(ctor, null);
 
-            return CreateNewWithConstructor(expression);
+            return CreateNewWithSpecificConstructor(expression);
         }
 
         private IEnumerable<Expression> GetDefaultArguments(ConstructorInfo parameterizedConstructor)

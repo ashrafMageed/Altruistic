@@ -6,6 +6,6 @@ namespace Altruistic
     public interface IObjectBuilderAdapter
     {
         TObject CreateNew<TObject>();
-        TObject CreateNewWithConstructor<TObject>(Expression<Func<TObject>> constructor);
+        TObject CreateNewWithSpecificConstructor<TObject>(Expression<Func<TObject>> constructor);
     }
 }
